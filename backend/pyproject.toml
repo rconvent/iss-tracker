@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "aerospacelab"
+version = "0.1.0"
+description = ""
+authors = ["raphael convent <raphael@youmeal.io>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.2"
+sentry-sdk = "^1.23.0"
+sqlalchemy = "<1.5"
+databases = "^0.7.0"
+uvicorn = "^0.22.0"
+aioredis = "^2.0.1"
+orjson = "^3.8.12"
+python-jose = "^3.3.0"
+alembic = "^1.11.0"
+bcrypt = "^4.0.1"
+httpx = "^0.24.0"
+pydantic = {extras = ["email"], version = "^1.10.7"}
+pyscopg2 = "^66.0.2"
+asyncpg = "^0.27.0"
+pytz = "^2023.3"
+fastapi-utils = "^0.2.1"
+
+[tool.poetry.group.dev.dependencies]
+psycopg2-binary = "^2.9.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
