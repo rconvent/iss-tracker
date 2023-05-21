@@ -1,7 +1,6 @@
 from typing import Any
 
 from pydantic import BaseSettings, PostgresDsn, RedisDsn, root_validator
-
 from src.constants import Environment
 
 
@@ -29,7 +28,7 @@ class Config(BaseSettings):
         return data
 
 
-settings = Config()
+settings = Config() # type: ignore
 
 app_configs: dict[str, Any] = {"title": "App API"}
 if settings.ENVIRONMENT.is_deployed:

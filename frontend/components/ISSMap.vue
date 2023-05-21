@@ -47,11 +47,11 @@ export default {
                 const updateSource = setInterval(async () => {
                     const geojson = await getLocation(updateSource);
                     map.getSource('iss').setData(geojson);
-                }, 2000);
+                }, 20000);
 
                 async function getLocation(updateSource) {
                     try {
-                        const response = await fetch('https://api.wheretheiss.at/v1/satellites/25544', { method: 'GET' });
+                        const response = await fetch('http://0.0.0.0:8000/iss/position/', { method: 'GET' });
                         const { latitude, longitude } = await response.json();
 
                         map.flyTo({

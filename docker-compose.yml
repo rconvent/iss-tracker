@@ -39,6 +39,19 @@ services:
     ports:
       - 6379:6379
 
+  nuxt-app:
+    container_name: nuxt-app
+    build: 
+      context: frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    command: "npm run dev"
+    networks:
+      - nuxt-network
+
+
 volumes:
   app_pg_data:
     driver: "local"
@@ -47,3 +60,5 @@ networks:
   default:
     external: true
     name: app_main
+  nuxt-network:
+    driver: bridge

@@ -8,6 +8,7 @@ from src.models import ORJSONModel
 class VISIBILITY(str, Enum):
     DAYLIGHT = "daylight"
     ECLIPSED = "eclipsed"
+    VISIBLE = "visible"
 
 class UNITS(str, Enum):
     KILOMETERS = "kilometers"

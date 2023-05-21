@@ -1,4 +1,4 @@
-from datetime import datetime
+import logging
 
 from databases import Database
 from sqlalchemy import (
@@ -12,7 +12,6 @@ from sqlalchemy import (
     Table,
     create_engine,
 )
-from sqlalchemy.dialects.postgresql import TIMESTAMP, UUID
 from src.config import settings
 from src.constants import DB_NAMING_CONVENTION
 
@@ -22,7 +21,6 @@ engine = create_engine(DATABASE_URL)
 metadata = MetaData(naming_convention=DB_NAMING_CONVENTION)
 
 database = Database(DATABASE_URL, force_rollback=settings.ENVIRONMENT.is_testing)
-
 
 iss_data = Table(
     "iss_data",
@@ -36,7 +34,7 @@ iss_data = Table(
     Column("visibility", String, nullable=False),
     Column("footprint", Float, nullable=False),
     Column("daynum", Float, nullable=False),
-    Column("timestamp", DateTime, nullable=False),
+    Column("timestamp", DateTime, nullable=False, index=True),
     Column("solar_lat", Float, nullable=False),
     Column("solar_lon", Float, nullable=False),
     Column("units", String, nullable=False),

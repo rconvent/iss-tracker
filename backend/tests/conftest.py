@@ -1,19 +1,12 @@
 import asyncio
-from typing import Any, Generator, AsyncGenerator
+from typing import Any, AsyncGenerator, Generator
 
+import alembic
 import pytest
 import pytest_asyncio
+from alembic.config import Config
 from async_asgi_testclient import TestClient
-
-from src.main import app
-
-
-@pytest.fixture(autouse=True, scope="session")
-def run_migrations() -> None:
-    import os
-
-    print("running migrations..")
-    os.system("alembic upgrade head")
+from fastapi import FastAPI
 
 
 @pytest.fixture(scope="session")
@@ -22,9 +15,10 @@ def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
     yield loop
     loop.close()
 
-
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="session")
 async def client() -> AsyncGenerator[TestClient, None]:
+    from src.main import app
+
     host, port = "127.0.0.1", "9000"
     scope = {"client": (host, port)}
 
