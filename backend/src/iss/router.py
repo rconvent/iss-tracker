@@ -1,8 +1,11 @@
+import json
 import logging
 from collections import defaultdict
 from datetime import date
 
 from fastapi import APIRouter, HTTPException, status
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
 from src.iss.schemas import ISSResponseIn, ISSResponseOut
 from src.iss.service import (
     insert_iss_data,
@@ -37,12 +40,12 @@ async def get_iss_position() -> dict[str, str]:
     }
     
 
-@router.get("/sun/", response_model=list[str])
+@router.get("/sun/")
 async def get_iss_sun_exposure(from_date : date, to_date: date = date.today()) -> list[str] | None:
 
     records = await retrieve_iss_sun_exposure(from_date=from_date, to_date=to_date)    
     if not records :
-        raise HTTPException(status_code=404, detail="No record found")
+        return []
 
     sun_exposure: dict[int, list[str]] = defaultdict(list)
     window = -1
@@ -58,5 +61,6 @@ async def get_iss_sun_exposure(from_date : date, to_date: date = date.today()) -
         visibility = record["visibility"]
         if visibility == "daylight":
             sun_exposure[window] += [record["timestamp"].strftime("%Y-%m-%d %H:%M:%S")]
-
-    return [f"{exposure[0]} - {exposure[-1]}" for exposure in sun_exposure.values() if len(exposure) > 2]
+    toReturn = jsonable_encoder([f"{exposure[0]} - {exposure[-1]}" for exposure in sun_exposure.values() if len(exposure) > 2])
+    
+    return JSONResponse(content=toReturn)

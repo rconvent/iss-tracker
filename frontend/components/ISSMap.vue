@@ -1,22 +1,22 @@
 <template>
-    <div class="map-container">
-        <div id="map"></div>
-    </div>
+                <div id="map-container">
+                    <div id="map"></div>
+                </div>
 </template>
-  
 <script>
-
-import mapboxgl from 'mapbox-gl';
+import mapboxgl from 'mapbox-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
 
 export default {
     data() {
         return {
-            accessToken: 'pk.eyJ1IjoicmNvbnZlbnQiLCJhIjoiY2xodXB3eXI1MDI4OTNncGdpY2E4MndzZyJ9.4Cm9FftoMvjqw8xJf6DJGw',
-            map: {}
+            accessToken:
+                'pk.eyJ1IjoicmNvbnZlbnQiLCJhIjoiY2xodXB3eXI1MDI4OTNncGdpY2E4MndzZyJ9.4Cm9FftoMvjqw8xJf6DJGw',
+            map: {},
         }
     },
     mounted() {
-        this.createMap();
+        this.createMap()
     },
 
     methods: {
@@ -25,39 +25,80 @@ export default {
             const map = new mapboxgl.Map({
                 container: 'map',
                 style: 'mapbox://styles/mapbox/streets-v12',
-                zoom: 2
-            });
+                zoom: 2,
+            })
 
             map.on('load', async () => {
-                const geojson = await getLocation();
+                const geojson = await getLocation()
                 map.addSource('iss', {
                     type: 'geojson',
-                    data: geojson
-                });
+                    data: geojson,
+                })
 
                 map.addLayer({
-                    id: 'iss',
+                    id: 'iss_position',
                     type: 'symbol',
                     source: 'iss',
                     layout: {
-                        'icon-image': "rocket"
-                    }
+                        'icon-image': 'rocket',
+                    },
+                })
+
+                const popup = new mapboxgl.Popup({
+                    closeButton: false,
+                    closeOnClick: false
                 });
 
+                map.on('mouseenter', 'iss_position', (e) => {
+                    map.getCanvas().style.cursor = 'pointer'
+
+                    const coordinates = e.features[0].geometry.coordinates.slice()
+                    const sunExposure = e.features[0].properties.sunExposure
+
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360
+                    }
+
+
+                    popup.setLngLat([coordinates[0], coordinates[1]])
+                        .setHTML(
+                            `${sunExposure}`
+                        )
+                        .addTo(map)
+                })
+
+                map.on('mouseleave', 'iss_position', () => {
+                    map.getCanvas().style.cursor = ''
+                    popup.remove()
+                })
+
                 const updateSource = setInterval(async () => {
-                    const geojson = await getLocation(updateSource);
-                    map.getSource('iss').setData(geojson);
-                }, 20000);
+                    const geojson = await getLocation(updateSource)
+                    map.getSource('iss').setData(geojson)
+                }, 20000)
 
                 async function getLocation(updateSource) {
                     try {
-                        const response = await fetch('http://0.0.0.0:8000/iss/position/', { method: 'GET' });
-                        const { latitude, longitude } = await response.json();
+                        const positionResponse = await fetch(
+                            'http://0.0.0.0:8000/iss/position/',
+                            { method: 'GET' }
+                        )
+                        const { latitude, longitude } = await positionResponse.json()
+
+                        var dayBefore = new Date()
+                        dayBefore.setDate(dayBefore.getDate() - 1)
+                        dayBefore = dayBefore.toISOString().split('T')[0]
+                        const exposureResponse = await fetch(
+                            `http://0.0.0.0:8000/iss/sun/?from_date=${dayBefore}`,
+                            { method: 'GET' }
+                        )
+                        const sunExposure = await exposureResponse.json()
+
 
                         map.flyTo({
                             center: [longitude, latitude],
-                            speed: 0.5
-                        });
+                            speed: 0.5,
+                        })
 
                         return {
                             type: 'FeatureCollection',
@@ -66,29 +107,48 @@ export default {
                                     type: 'Feature',
                                     geometry: {
                                         type: 'Point',
-                                        coordinates: [longitude, latitude]
-                                    }
-                                }
-                            ]
-                        };
+                                        coordinates: [longitude, latitude],
+                                    },
+                                    properties: {
+                                        sunExposure:
+                                            `<h1>ISS Sun Exposure : </h1>
+                                            <ul>
+                                            ${sunExposure.map((interval) => `<li>${interval}</li>`).join('')}
+                                            </ul>
+                                            `,
+                                    },
+                                },
+                            ],
+                        }
                     } catch (err) {
-                        if (updateSource) clearInterval(updateSource);
-                        throw new Error(err);
+                        if (updateSource) clearInterval(updateSource)
+                        throw new Error(err)
                     }
                 }
-            });
-        }
-
-    }
-
-};
+            })
+        },
+    },
+}
 </script>
-  
+
 <style>
+#map-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
 #map {
     position: absolute;
     top: 0;
     bottom: 0;
     width: 100%;
+    height: 100%;
+}
+
+.mapboxgl-popup {
+    position: absolute;
+    max-width: 400px;
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 }
 </style>
