@@ -1,6 +1,10 @@
 ```
+# Setup docker container
 docker network create app_main 
 docker-compose up -d --build
+
+# create DB
+docker compose exec app migrate
 ```
 
 API Documentation

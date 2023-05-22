@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi_utils.tasks import repeat_every
 from src.config import app_configs, settings
 from src.database import database
+from src.geojson.router import router as geojson_router
 from src.iss.router import router as iss_router
 from src.iss.schemas import ISSResponseIn
 from src.iss.service import insert_iss_data
@@ -53,3 +54,4 @@ async def healthcheck() -> dict[str, str]:
     return {"status": "ok"}
 
 app.include_router(iss_router, prefix="/iss", tags=["ISS"])
+app.include_router(geojson_router, prefix="/geojson", tags=["GeoJSON"])

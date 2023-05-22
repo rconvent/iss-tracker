@@ -433,6 +433,25 @@ pydantic = ">=1.0,<2.0"
 sqlalchemy = ">=1.3.12,<2.0.0"
 
 [[package]]
+name = "geojson-pydantic"
+version = "0.6.2"
+description = "Pydantic data models for the GeoJSON spec."
+category = "main"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "geojson_pydantic-0.6.2-py3-none-any.whl", hash = "sha256:23a6bfc0a998f9263bc5b3dcfdefef211bf795641905aa423599079bc49db5f3"},
+    {file = "geojson_pydantic-0.6.2.tar.gz", hash = "sha256:8ce2eba12d7144afce7d20b2ebeec9434c54a52d102bf8c400f01de50cf6ff45"},
+]
+
+[package.dependencies]
+pydantic = "*"
+
+[package.extras]
+dev = ["pre-commit"]
+test = ["pytest", "pytest-cov", "shapely"]
+
+[[package]]
 name = "greenlet"
 version = "2.0.2"
 description = "Lightweight in-process concurrent programming"
@@ -1321,4 +1340,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d612182b9b9f99bf8474d915d692f8597da19b050a02e02ecf6a1510757ccc50"
+content-hash = "d34688eaa7483c61bd2b56d6785097782738ea6067422515af9900bd01772765"

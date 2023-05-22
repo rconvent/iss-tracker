@@ -12,6 +12,7 @@ from sqlalchemy import (
     Table,
     create_engine,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from src.config import settings
 from src.constants import DB_NAMING_CONVENTION
 
@@ -38,4 +39,14 @@ iss_data = Table(
     Column("solar_lat", Float, nullable=False),
     Column("solar_lon", Float, nullable=False),
     Column("units", String, nullable=False),
+)
+
+
+geojson_data = Table(
+    "geojson_data",
+    metadata,
+    Column("id", Integer, Identity(start=42, cycle=True), primary_key=True),
+    Column("type", String, nullable=False),
+    Column("geometry", JSONB, nullable=False),
+    Column("properties", JSONB, nullable=False),
 )

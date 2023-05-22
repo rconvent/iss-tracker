@@ -26,6 +26,7 @@ fastapi-utils = "^0.2.1"
 async-asgi-testclient = "^1.4.11"
 pytest = "^7.3.1"
 pytest-asyncio = "^0.21.0"
+geojson-pydantic = "^0.6.2"
 
 [tool.poetry.group.dev.dependencies]
 psycopg2-binary = "^2.9.5"
