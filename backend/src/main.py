@@ -40,7 +40,7 @@ async def retrieve_iss_data_task() -> None:
     
     url = "https://api.wheretheiss.at/v1/satellites/25544"
     data = requests.request("GET", url).json()
-    
+     
     await insert_iss_data(ISSResponseIn(**data))
 
 @app.on_event("shutdown")
