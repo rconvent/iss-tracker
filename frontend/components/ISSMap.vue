@@ -105,9 +105,6 @@ export default {
                         "geometry": lastDraw.geometry,
                         "properties": lastDraw.properties
                     }
-                    console.log(JSON.stringify(jsonData))
-
-                    console.log(jsonData)
                     const response = await fetch("http://0.0.0.0:8000/geojson/", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
