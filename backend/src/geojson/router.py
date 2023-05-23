@@ -9,6 +9,7 @@ from src.geojson.service import (
     select_geojson_data,
     select_geojson_data_by_id,
     select_geojson_data_by_type,
+    select_geojson_data_by_uuid,
 )
 
 router = APIRouter()
@@ -41,8 +42,20 @@ async def delete_geojson_by_id(id: int) -> dict[str, str]:
         raise HTTPException(status_code=404, detail="Item not found")
 
 
-@router.get("/", response_model=List[GeojsonResponseOut])
-async def get_geojson(limit: int = 0, type: str | None = None) -> list[dict[str, str]]:
+@router.get("/", response_model=List[GeojsonResponseOut] | GeojsonResponseOut)
+async def get_geojson(limit: int = 0, type: str | None = None, uuid:str | None = None) -> list[dict[str, str]] | dict[str, str]:
+
+    if uuid:
+        data = await select_geojson_data_by_uuid(uuid=uuid)
+        if not data :
+            raise HTTPException(status_code=404, detail="Item not found")
+        return {
+            "id": data["id"],
+            "mapbox_uuid": data["mapbox_uuid"],               
+            "type": data["type"],
+            "geometry": data["geometry"],
+            "properties": data["properties"],
+        }
 
     if type :
         records = await select_geojson_data_by_type(type=type, limit=limit)
@@ -53,7 +66,8 @@ async def get_geojson(limit: int = 0, type: str | None = None) -> list[dict[str,
         raise HTTPException(status_code=404, detail="Item not found")
 
     return [{
-        "id": data["id"],               
+        "id": data["id"],
+        "mapbox_uuid": data["mapbox_uuid"],               
         "type": data["type"],
         "geometry": data["geometry"],
         "properties": data["properties"],
@@ -68,7 +82,8 @@ async def post_geojson(geojson_data: GeojsonResponseIn) -> dict[str, str]:
         raise HTTPException(status_code=404, detail="Item not found")
 
     return {
-        "id": data["id"],               
+        "id": data["id"], 
+        "mapbox_uuid": data["mapbox_uuid"],               
         "type": data["type"],
         "geometry": data["geometry"],
         "properties": data["properties"],

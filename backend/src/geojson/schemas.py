@@ -7,18 +7,12 @@ from pydantic import Field
 from src.models import ORJSONModel
 
 
-class GEOMETRYTYPE(str, Enum):
-    FEATURE = "Feature"
-    MULTIPOINT = "MultiPoint"
-    LINESTRING = "LineString"
-    POLYGON = "Polygon"
-
 class TYPE(str, Enum):
     FEATURE = "Feature"
 
-
     
 class GeojsonResponseIn(ORJSONModel):
+    mapbox_uuid: str | None
     type: TYPE
     # geometry:  Union[Geometry, GeometryCollection]
     geometry: Dict[str, Any]
@@ -26,6 +20,7 @@ class GeojsonResponseIn(ORJSONModel):
 
 class GeojsonResponseOut(ORJSONModel):
     id: int 
+    mapbox_uuid: str | None
     type: TYPE
     geometry:  Union[Geometry, GeometryCollection]
     properties: Dict[str, Any]

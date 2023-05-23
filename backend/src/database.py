@@ -49,4 +49,5 @@ geojson_data = Table(
     Column("type", String, nullable=False),
     Column("geometry", JSONB, nullable=False),
     Column("properties", JSONB, nullable=False),
+    Column("mapbox_uuid", String, nullable=True),
 )

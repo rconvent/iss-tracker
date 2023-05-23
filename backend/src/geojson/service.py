@@ -14,6 +14,7 @@ async def insert_geojson_data(data: GeojsonResponseIn) -> Record | None :
         insert(geojson_data)
         .values(
             {
+                "mapbox_uuid": data.mapbox_uuid,
                 "type": data.type,
                 "geometry": data.geometry,
                 "properties": data.properties,
@@ -26,6 +27,11 @@ async def insert_geojson_data(data: GeojsonResponseIn) -> Record | None :
 
 async def select_geojson_data_by_id(id: int) -> Record | None:
     select_query = select(geojson_data).where(geojson_data.c.id==id)
+
+    return await database.fetch_one(select_query)
+
+async def select_geojson_data_by_uuid(uuid: str) -> Record | None:
+    select_query = select(geojson_data).where(geojson_data.c.mapbox_uuid==uuid)
 
     return await database.fetch_one(select_query)
 
